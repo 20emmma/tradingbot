@@ -1,0 +1,6 @@
+.env
+*.pyc
+__pycache__/
+venv/
+paper_ledger*.json
+*.log

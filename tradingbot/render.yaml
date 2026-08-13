@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: tradingbot-dashboard
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 dashboard/app.py
+    envVars:
+      - key: GITHUB_REPO
+        sync: false   # you'll set this manually to yourusername/tradingbot after deploying
+      - key: GITHUB_BRANCH
+        value: main
+      - key: PORT
+        value: 10000

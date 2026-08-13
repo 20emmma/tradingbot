@@ -1,0 +1,23 @@
+[Unit]
+Description=Trading Bot
+After=network.target
+
+[Service]
+Type=simple
+# Adjust these two paths to match where you deployed the code on your server
+WorkingDirectory=/home/YOUR_USERNAME/tradingbot
+ExecStart=/home/YOUR_USERNAME/tradingbot/venv/bin/python3 /home/YOUR_USERNAME/tradingbot/main.py
+
+Restart=on-failure
+RestartSec=30
+
+# Prevents runaway restart loops from a persistent bug (e.g. bad config)
+StartLimitIntervalSec=600
+StartLimitBurst=5
+
+# Logs go to the system journal -- view with: journalctl -u tradingbot -f
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

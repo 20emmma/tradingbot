@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="15">
+<title>Bot Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0E11;
+    --panel: #12161B;
+    --panel-border: #232830;
+    --text: #E8E6E1;
+    --text-dim: #6B7280;
+    --amber: #F0A83B;
+    --gain: #5FD97A;
+    --loss: #F0605A;
+    --halt: #F0605A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    padding: 32px 20px 60px;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  header .live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gain);
+    box-shadow: 0 0 8px var(--gain);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .empty {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    font-size: 14px;
+    padding: 40px 0;
+    text-align: center;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+  }
+  .market-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .mode-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 3px 9px;
+    border-radius: 3px;
+    border: 1px solid var(--panel-border);
+    color: var(--text-dim);
+  }
+  .mode-badge.live {
+    color: var(--loss);
+    border-color: var(--loss);
+  }
+
+  .balance-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .balance {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .balance-change {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+  }
+  .balance-change.gain { color: var(--gain); }
+  .balance-change.loss { color: var(--loss); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+  }
+  .stat-value.gain { color: var(--gain); }
+  .stat-value.loss { color: var(--loss); }
+
+  .halt-banner {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--halt);
+    background: rgba(240, 96, 90, 0.08);
+    border: 1px solid rgba(240, 96, 90, 0.25);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+  }
+
+  .events-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .event {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    padding: 6px 0;
+    border-top: 1px solid var(--panel-border);
+  }
+  .event:first-child { border-top: none; }
+
+  footer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>tradingbot // status</h1>
+    <div class="live"><span class="dot"></span>auto-refresh 15s</div>
+  </header>
+
+  {% if not statuses %}
+  <div class="empty">No status data yet. The bot writes this file on its first loop iteration — check back after it's been running a minute.</div>
+  {% endif %}
+
+  {% for s in statuses %}
+  <div class="panel">
+    <div class="panel-head">
+      <span class="market-label">{{ s.market }} · {{ s.symbol }}</span>
+      <span class="mode-badge {% if s.mode == 'live' %}live{% endif %}">{{ s.mode }}</span>
+    </div>
+
+    <div class="balance-row">
+      <div class="balance">${{ "%.2f"|format(s.capital) }}</div>
+      {% set change = s.capital - s.starting_capital %}
+      <div class="balance-change {% if change >= 0 %}gain{% else %}loss{% endif %}">
+        {{ "%+.2f"|format(change) }} since start
+      </div>
+    </div>
+
+    {% if s.trading_halted_today %}
+    <div class="halt-banner">⚠ daily loss limit reached — trading paused until tomorrow</div>
+    {% endif %}
+
+    <div class="grid">
+      <div>
+        <div class="stat-label">Last Signal</div>
+        <div class="stat-value">{{ s.last_signal }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Current Price</div>
+        <div class="stat-value">${{ "%.4f"|format(s.current_price) }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Today's PnL</div>
+        <div class="stat-value {% if s.daily_pnl >= 0 %}gain{% else %}loss{% endif %}">{{ "%+.4f"|format(s.daily_pnl) }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Open Position</div>
+        <div class="stat-value">
+          {% if s.open_position %}{{ s.open_position.side }} @ ${{ "%.4f"|format(s.open_position.entry_price) }}{% else %}none{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="events-title">Recent Activity</div>
+    {% for event in s.recent_events %}
+    <div class="event">{{ event }}</div>
+    {% else %}
+    <div class="event">No events yet.</div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <footer>Paper mode uses simulated money on real market data. Not financial advice.</footer>
+</div>
+</body>
+</html>

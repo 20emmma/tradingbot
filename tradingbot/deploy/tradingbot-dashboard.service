@@ -1,0 +1,17 @@
+[Unit]
+Description=Trading Bot Dashboard
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/YOUR_USERNAME/tradingbot
+ExecStart=/home/YOUR_USERNAME/tradingbot/venv/bin/python3 /home/YOUR_USERNAME/tradingbot/dashboard/app.py
+
+Restart=on-failure
+RestartSec=15
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
