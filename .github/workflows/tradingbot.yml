@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 defaults:
   run:
@@ -15,6 +17,9 @@ defaults:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -49,3 +54,12 @@ jobs:
           shopt -u nullglob
           git diff --quiet --cached || git commit -m "Bot run: $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tradingbot/docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
