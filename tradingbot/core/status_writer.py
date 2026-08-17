@@ -26,14 +26,15 @@ class BotStatus:
     trading_halted_today: bool
     open_position: Optional[dict]
     recent_events: List[str] = field(default_factory=list)
-    price_history: List[dict] = field(default_factory=list)  # [{"t": timestamp, "price": float, "signal": str}]
+    price_history: List[dict] = field(default_factory=list)
+    run_count: int = 0
 
 
 class StatusWriter:
     def __init__(self, path: str = "status.json", max_events: int = 20, max_history: int = 48):
         self.path = path
         self.max_events = max_events
-        self.max_history = max_history  # 48 hourly points = 2 days of history
+        self.max_history = max_history
         self._events: List[str] = []
         self._price_history: List[dict] = []
 
@@ -48,13 +49,14 @@ class StatusWriter:
 
     def write(self, mode, market, symbol, last_signal, current_price,
               capital, starting_capital, daily_pnl, trading_halted_today,
-              open_position):
+              open_position, run_count=0):
         status = BotStatus(
             mode=mode, market=market, symbol=symbol, last_updated=int(time.time()),
             last_signal=last_signal, current_price=current_price, capital=capital,
             starting_capital=starting_capital, daily_pnl=daily_pnl,
             trading_halted_today=trading_halted_today, open_position=open_position,
             recent_events=list(self._events), price_history=list(self._price_history),
+            run_count=run_count,
         )
         with open(self.path, "w") as f:
             json.dump(asdict(status), f, indent=2)
