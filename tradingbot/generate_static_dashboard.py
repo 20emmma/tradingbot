@@ -1,21 +1,16 @@
 """
 generate_static_dashboard.py
 
-Renders the dashboard as a static HTML file instead of running a live
-Flask server. Called at the end of every GitHub Actions run, right after
-the bot's trading check -- the output (docs/index.html) gets committed
-back to the repo alongside the state files, and GitHub Pages serves it
-directly. No separate hosting service needed, no card, no sleep/cold-start.
-
-The tradeoff vs. a live Flask dashboard: this only updates once per hour
-(whenever the bot runs), not in real time. For a bot that only trades
-once per hour anyway, that's not a meaningful loss.
+Renders the dashboard as a static HTML file. Called at the end of every
+GitHub Actions run -- the output (docs/index.html) gets committed back to
+the repo, and GitHub Pages serves it directly.
 """
 
 import json
 import os
 import glob
 from jinja2 import Environment, FileSystemLoader
+from core.sparkline import build_sparkline_svg
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIR = os.path.join(PROJECT_ROOT, "dashboard", "templates")
@@ -28,7 +23,10 @@ def load_all_statuses():
     for path in sorted(glob.glob(os.path.join(PROJECT_ROOT, "status_*.json"))):
         try:
             with open(path) as f:
-                statuses.append(json.load(f))
+                status = json.load(f)
+                prices = [p["price"] for p in status.get("price_history", [])]
+                status["sparkline_svg"] = build_sparkline_svg(prices)
+                statuses.append(status)
         except (json.JSONDecodeError, FileNotFoundError):
             continue
     return statuses
