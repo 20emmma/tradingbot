@@ -84,13 +84,13 @@ def main():
         chat_id=os.environ.get("TELEGRAM_CHAT_ID", ""),
     )
     status_writer = StatusWriter(path=f"status_{market}.json")
-    # Preserve recent event history across runs so the dashboard shows a real log, not just one line
-    prev_status = {}
-    if os.path.exists(f"status_{market}.json"):
-        import json
-        with open(f"status_{market}.json") as f:
-            prev_status = json.load(f)
-        status_writer._events = prev_status.get("recent_events", [])
+        prev_status = {}
+        if os.path.exists(f"status_{market}.json"):
+            import json
+            with open(f"status_{market}.json") as f:
+                prev_status = json.load(f)
+            status_writer._events = prev_status.get("recent_events", [])
+            status_writer._price_history = prev_status.get("price_history", [])
 
     open_position = bot_state.open_position  # dict or None
 
@@ -117,6 +117,7 @@ def main():
             long_period=int(os.environ.get("LONG_PERIOD", 21)),
         )
         log.info(f"[{market}] Signal: {signal.value} | Price: {current_price} | Capital: ${risk_manager.state.capital:.4f}")
+        status_writer.record_price_point(current_price, signal.value)
 
         if signal == Signal.BUY and open_position is None:
             if not risk_manager.can_open_new_trade():
