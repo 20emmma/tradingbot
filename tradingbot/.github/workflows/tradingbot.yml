@@ -2,17 +2,15 @@ name: Trading Bot Hourly Run
 
 on:
   schedule:
-    # Runs at the top of every hour (UTC). GitHub's scheduler can lag by a
-    # few minutes under load -- that's normal and doesn't affect strategy
-    # correctness, since we always fetch fresh candles at run time.
     - cron: "0 * * * *"
   workflow_dispatch:
-    # Lets you manually trigger a run from the GitHub Actions tab, useful
-    # for testing without waiting for the next scheduled hour.
 
-# Needed so this workflow can commit state files back to the repo
 permissions:
   contents: write
+
+defaults:
+  run:
+    working-directory: tradingbot
 
 jobs:
   run-bot:
