@@ -125,6 +125,21 @@
   .balance-change.gain { color: var(--gain); }
   .balance-change.loss { color: var(--loss); }
 
+  .sparkline-wrap {
+    margin-bottom: 22px;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.015);
+    overflow: hidden;
+  }
+  .sparkline-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 14px;
+    text-align: center;
+  }
+  
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -210,6 +225,12 @@
 
     
 
+    <div class="sparkline-wrap">
+      
+      <div class="sparkline-empty">Not enough history yet — chart fills in over the next day or two</div>
+      
+    </div>
+    
     <div class="grid">
       <div>
         <div class="stat-label">Last Signal</div>
@@ -217,7 +238,7 @@
       </div>
       <div>
         <div class="stat-label">Current Price</div>
-        <div class="stat-value">$64405.3000</div>
+        <div class="stat-value">$64293.4000</div>
       </div>
       <div>
         <div class="stat-label">Today's PnL</div>
