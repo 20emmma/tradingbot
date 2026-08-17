@@ -84,13 +84,15 @@ def main():
         chat_id=os.environ.get("TELEGRAM_CHAT_ID", ""),
     )
     status_writer = StatusWriter(path=f"status_{market}.json")
-        prev_status = {}
-        if os.path.exists(f"status_{market}.json"):
-            import json
-            with open(f"status_{market}.json") as f:
-                prev_status = json.load(f)
-            status_writer._events = prev_status.get("recent_events", [])
-            status_writer._price_history = prev_status.get("price_history", [])
+    # Preserve recent event history and price history across runs so the
+    # dashboard shows a real trend, not just one snapshot.
+    prev_status = {}
+    if os.path.exists(f"status_{market}.json"):
+        import json
+        with open(f"status_{market}.json") as f:
+            prev_status = json.load(f)
+        status_writer._events = prev_status.get("recent_events", [])
+        status_writer._price_history = prev_status.get("price_history", [])
 
     open_position = bot_state.open_position  # dict or None
 
