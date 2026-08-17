@@ -54,11 +54,9 @@ def main():
     interval_minutes = settings["interval_minutes"]
     today = datetime.now(timezone.utc).date()
 
-    # ---- Load persisted state from the last run ----
     state_path = f"state_{market}.json"
     bot_state = load_state(state_path, settings["starting_capital"], today)
 
-    # Roll over to a new day if needed
     if bot_state.day != today.isoformat():
         bot_state.day = today.isoformat()
         bot_state.daily_pnl = 0.0
@@ -84,8 +82,6 @@ def main():
         chat_id=os.environ.get("TELEGRAM_CHAT_ID", ""),
     )
     status_writer = StatusWriter(path=f"status_{market}.json")
-    # Preserve recent event history and price history across runs so the
-    # dashboard shows a real trend, not just one snapshot.
     prev_status = {}
     if os.path.exists(f"status_{market}.json"):
         import json
@@ -94,14 +90,22 @@ def main():
         status_writer._events = prev_status.get("recent_events", [])
         status_writer._price_history = prev_status.get("price_history", [])
 
-    open_position = bot_state.open_position  # dict or None
+    open_position = bot_state.open_position
+
+    # Send a lightweight heartbeat once every 6 runs (~every 6 hours) so you
+    # get periodic confirmation the bot is alive even when nothing's trading.
+    run_count = prev_status.get("run_count", 0) + 1
+    if run_count % 6 == 1:
+        notifier.send(
+            f"\U0001F440 *Heartbeat* — {market} bot is alive and checking.\n"
+            f"Capital: ${risk_manager.state.capital:.4f} | Mode: {config.mode.upper()}"
+        )
 
     try:
         candles = engine.get_candles(symbol, interval_minutes, limit=100)
         current_price = candles[-1].close
         was_halted_before = risk_manager.state.trading_halted_today
 
-        # Stop-loss check first
         if open_position is not None:
             stop_price = risk_manager.stop_loss_price(open_position["entry_price"])
             if current_price <= stop_price:
@@ -149,15 +153,13 @@ def main():
             current_price=current_price, capital=risk_manager.state.capital,
             starting_capital=bot_state.starting_capital, daily_pnl=risk_manager.state.daily_pnl,
             trading_halted_today=risk_manager.state.trading_halted_today, open_position=open_position,
+            run_count=run_count,
         )
 
     except Exception as e:
         log.error(f"Error during run: {e}", exc_info=True)
         notifier.notify_error(str(e))
         status_writer.log_event(f"ERROR: {e}")
-        # Still write a status update so the dashboard reflects that an error
-        # occurred, rather than silently going stale. Falls back to the last
-        # known price if we never got a fresh one this run.
         last_known_price = prev_status.get("current_price", 0.0)
         try:
             status_writer.write(
@@ -165,13 +167,11 @@ def main():
                 current_price=last_known_price, capital=risk_manager.state.capital,
                 starting_capital=bot_state.starting_capital, daily_pnl=risk_manager.state.daily_pnl,
                 trading_halted_today=risk_manager.state.trading_halted_today, open_position=open_position,
+                run_count=run_count,
             )
         except Exception:
-            pass  # don't let a status-write failure mask the original error
-        # Still fall through to save state -- we don't want a transient error
-        # to lose track of an open position.
+            pass
 
-    # ---- Persist state for the next scheduled run ----
     bot_state.capital = risk_manager.state.capital
     bot_state.daily_pnl = risk_manager.state.daily_pnl
     bot_state.trading_halted_today = risk_manager.state.trading_halted_today
