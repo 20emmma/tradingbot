@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": 1787067205,
+    "symbol": "XBTUSD",
+    "side": "buy",
+    "notional_usd": 10.0,
+    "price": 64752.0,
+    "fee": 0.026,
+    "balance_after": 10.0
+  }
+]
