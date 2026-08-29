@@ -4,5 +4,9 @@
   "day": "2026-08-29",
   "daily_pnl": 0.0,
   "trading_halted_today": false,
-  "open_position": null
+  "open_position": {
+    "side": "buy",
+    "entry_price": 78013.1,
+    "notional_usd": 11.74692422013151
+  }
 }
