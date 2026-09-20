@@ -2,7 +2,7 @@ name: Trading Bot Hourly Run
 
 on:
   schedule:
-    - cron: "17 * * * *"
+    - cron: "8,23,38,53 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -40,6 +40,7 @@ jobs:
           KRAKEN_API_SECRET: ${{ secrets.KRAKEN_API_SECRET }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          HEARTBEAT_EVERY_N_RUNS: "24"
         run: python3 run_once.py
 
       - name: Generate static dashboard
