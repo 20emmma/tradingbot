@@ -1,15 +1,8 @@
 """
 core/state_store.py
 
-Since GitHub Actions gives you a fresh, empty filesystem on every scheduled
-run, the bot has no memory between runs unless we explicitly save and
-reload it. This module handles that: state is saved to a JSON file, which
-the GitHub Actions workflow commits back to the repo after each run, and
-reloads at the start of the next run.
-
-This is the key piece that makes "run once per hour on a schedule" behave
-identically to "run continuously and check once per hour" from a trading
-logic standpoint.
+Persists bot state between runs (needed since GitHub Actions gives a fresh
+filesystem every run). Saved to JSON, committed back to the repo.
 """
 
 import json
@@ -23,17 +16,18 @@ from typing import Optional
 class BotState:
     capital: float
     starting_capital: float
-    day: str                    # ISO date string, e.g. "2026-08-12"
+    day: str
     daily_pnl: float
     trading_halted_today: bool
-    open_position: Optional[dict]  # {"side", "entry_price", "notional_usd"} or None
+    open_position: Optional[dict]
+    last_processed_candle_ts: int = 0
 
 
 def load_state(path: str, starting_capital: float, today: date) -> BotState:
-    """Load saved state, or create a fresh one if this is the first-ever run."""
     if os.path.exists(path):
         with open(path) as f:
             raw = json.load(f)
+        raw.setdefault("last_processed_candle_ts", 0)
         return BotState(**raw)
 
     return BotState(
@@ -43,6 +37,7 @@ def load_state(path: str, starting_capital: float, today: date) -> BotState:
         daily_pnl=0.0,
         trading_halted_today=False,
         open_position=None,
+        last_processed_candle_ts=0,
     )
 
 
