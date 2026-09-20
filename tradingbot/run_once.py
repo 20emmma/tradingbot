@@ -1,15 +1,22 @@
 """
 run_once.py
 
-Does ONE check-and-act cycle, then exits. This is what GitHub Actions
-calls on a schedule (e.g. every hour). Unlike main.py's continuous loop,
-this process has no memory of previous runs -- all state is loaded from
-and saved back to JSON files, which the GitHub Actions workflow commits
-to the repo between runs.
+Does ONE check-and-act cycle, then exits. Called frequently (every ~15 min)
+by GitHub Actions, but internally splits its work into two different
+cadences:
 
-Run with:
-    MARKET=kraken BOT_MODE=paper python3 run_once.py
-    MARKET=oanda BOT_MODE=paper python3 run_once.py
+1. STOP-LOSS CHECK -- runs on every single invocation, using the LIVE
+   current price. This is what protects an open position between hourly
+   candle closes. If the schedule gets delayed or skipped for a stretch,
+   the next run still catches a stop-loss breach as soon as it finally
+   runs, using real-time price -- not a stale hourly close.
+
+2. SIGNAL EVALUATION -- only runs when a genuinely NEW hourly candle has
+   completed since the last time we checked (tracked via
+   last_processed_candle_ts). This keeps the moving-average crossover
+   logic clean and noise-free, exactly as if it only ran once per hour --
+   frequent checks never cause the strategy to react to a still-forming
+   candle.
 """
 
 import os
@@ -41,6 +48,16 @@ def build_real_adapter(market: str, config):
     elif market == "oanda":
         return OandaAdapter(config.oanda_api_token, config.oanda_account_id, config.oanda_environment)
     raise ValueError(f"Unknown market: {market}")
+
+
+def close_position(engine, notifier, status_writer, risk_manager, symbol, open_position, reason):
+    result = engine.place_market_order(symbol, "sell", open_position["notional_usd"])
+    pnl = (result.filled_price - open_position["entry_price"]) / open_position["entry_price"] \
+        * open_position["notional_usd"] - result.fee_paid
+    risk_manager.record_trade_result(pnl)
+    notifier.notify_trade_closed(symbol, result.filled_price, pnl, reason)
+    status_writer.log_event(f"Closed position via {reason}: {symbol} at ${result.filled_price:.4f}, PnL ${pnl:+.4f}")
+    return pnl
 
 
 def main():
@@ -92,65 +109,78 @@ def main():
 
     open_position = bot_state.open_position
 
-    # Send a lightweight heartbeat once every 6 runs (~every 6 hours) so you
-    # get periodic confirmation the bot is alive even when nothing's trading.
     run_count = prev_status.get("run_count", 0) + 1
-    if run_count % 6 == 1:
+    heartbeat_every_n_runs = int(os.environ.get("HEARTBEAT_EVERY_N_RUNS", 24))
+    if run_count % heartbeat_every_n_runs == 1:
         notifier.send(
             f"\U0001F440 *Heartbeat* — {market} bot is alive and checking.\n"
             f"Capital: ${risk_manager.state.capital:.4f} | Mode: {config.mode.upper()}"
         )
 
+    signal_this_run = Signal.HOLD
+    current_price_for_status = prev_status.get("current_price", 0.0)
+    live_price_fetched_this_run = False
+
     try:
-        candles = engine.get_candles(symbol, interval_minutes, limit=100)
-        current_price = candles[-1].close
         was_halted_before = risk_manager.state.trading_halted_today
 
+        # ---- PART 1: stop-loss check using LIVE price, every single run ----
         if open_position is not None:
+            live_price = real_adapter.get_current_price(symbol)
+            current_price_for_status = live_price
+            live_price_fetched_this_run = True
             stop_price = risk_manager.stop_loss_price(open_position["entry_price"])
-            if current_price <= stop_price:
-                result = engine.place_market_order(symbol, "sell", open_position["notional_usd"])
-                pnl = (result.filled_price - open_position["entry_price"]) / open_position["entry_price"] \
-                    * open_position["notional_usd"] - result.fee_paid
-                risk_manager.record_trade_result(pnl)
-                notifier.notify_trade_closed(symbol, result.filled_price, pnl, "stop-loss")
-                status_writer.log_event(f"Stop-loss hit: closed {symbol} at ${result.filled_price:.4f}, PnL ${pnl:+.4f}")
+            if live_price <= stop_price:
+                log.warning(f"[{market}] LIVE stop-loss breach: {live_price} <= {stop_price}")
+                close_position(engine, notifier, status_writer, risk_manager,
+                                symbol, open_position, "stop-loss")
                 open_position = None
 
-        signal = MovingAverageCrossoverStrategy.stateless_signal(
-            candles,
-            short_period=int(os.environ.get("SHORT_PERIOD", 9)),
-            long_period=int(os.environ.get("LONG_PERIOD", 21)),
-        )
-        log.info(f"[{market}] Signal: {signal.value} | Price: {current_price} | Capital: ${risk_manager.state.capital:.4f}")
-        status_writer.record_price_point(current_price, signal.value)
+        # ---- PART 2: signal evaluation, only if a genuinely new candle exists ----
+        candles = engine.get_candles(symbol, interval_minutes, limit=100)
+        latest_candle_ts = candles[-1].timestamp
+        if not live_price_fetched_this_run:
+            current_price_for_status = candles[-1].close
+        new_candle_available = latest_candle_ts > bot_state.last_processed_candle_ts
 
-        if signal == Signal.BUY and open_position is None:
-            if not risk_manager.can_open_new_trade():
-                log.info("Daily loss limit hit — skipping BUY signal today.")
-            else:
-                notional = risk_manager.position_size()
-                result = engine.place_market_order(symbol, "buy", notional)
-                open_position = {"side": "buy", "entry_price": result.filled_price, "notional_usd": notional}
-                notifier.notify_trade_opened(symbol, result.filled_price, notional)
-                status_writer.log_event(f"Opened position: {symbol} at ${result.filled_price:.4f}")
+        if new_candle_available:
+            signal_this_run = MovingAverageCrossoverStrategy.stateless_signal(
+                candles,
+                short_period=int(os.environ.get("SHORT_PERIOD", 9)),
+                long_period=int(os.environ.get("LONG_PERIOD", 21)),
+            )
+            bot_state.last_processed_candle_ts = latest_candle_ts
+            log.info(f"[{market}] NEW CANDLE -- Signal: {signal_this_run.value} | "
+                     f"Price: {current_price_for_status} | Capital: ${risk_manager.state.capital:.4f}")
+            status_writer.record_price_point(current_price_for_status, signal_this_run.value)
 
-        elif signal == Signal.SELL and open_position is not None:
-            result = engine.place_market_order(symbol, "sell", open_position["notional_usd"])
-            pnl = (result.filled_price - open_position["entry_price"]) / open_position["entry_price"] \
-                * open_position["notional_usd"] - result.fee_paid
-            risk_manager.record_trade_result(pnl)
-            notifier.notify_trade_closed(symbol, result.filled_price, pnl, "signal")
-            status_writer.log_event(f"Closed position via signal: {symbol} at ${result.filled_price:.4f}, PnL ${pnl:+.4f}")
-            open_position = None
+            if signal_this_run == Signal.BUY and open_position is None:
+                if not risk_manager.can_open_new_trade():
+                    log.info("Daily loss limit hit — skipping BUY signal today.")
+                else:
+                    notional = risk_manager.position_size()
+                    result = engine.place_market_order(symbol, "buy", notional)
+                    open_position = {"side": "buy", "entry_price": result.filled_price, "notional_usd": notional}
+                    notifier.notify_trade_opened(symbol, result.filled_price, notional)
+                    status_writer.log_event(f"Opened position: {symbol} at ${result.filled_price:.4f}")
+
+            elif signal_this_run == Signal.SELL and open_position is not None:
+                close_position(engine, notifier, status_writer, risk_manager,
+                                symbol, open_position, "signal")
+                open_position = None
+        else:
+            signal_this_run = Signal(prev_status.get("last_signal", "HOLD")) \
+                if prev_status.get("last_signal") in ("BUY", "SELL", "HOLD") else Signal.HOLD
+            log.info(f"[{market}] No new candle yet -- stop-loss checked, signal unchanged "
+                     f"({signal_this_run.value}) | Price: {current_price_for_status}")
 
         if risk_manager.state.trading_halted_today and not was_halted_before:
             notifier.notify_daily_halt(risk_manager.state.daily_pnl)
             status_writer.log_event(f"Daily loss limit hit. Today's PnL: ${risk_manager.state.daily_pnl:+.4f}")
 
         status_writer.write(
-            mode=config.mode, market=market, symbol=symbol, last_signal=signal.value,
-            current_price=current_price, capital=risk_manager.state.capital,
+            mode=config.mode, market=market, symbol=symbol, last_signal=signal_this_run.value,
+            current_price=current_price_for_status, capital=risk_manager.state.capital,
             starting_capital=bot_state.starting_capital, daily_pnl=risk_manager.state.daily_pnl,
             trading_halted_today=risk_manager.state.trading_halted_today, open_position=open_position,
             run_count=run_count,
@@ -160,11 +190,10 @@ def main():
         log.error(f"Error during run: {e}", exc_info=True)
         notifier.notify_error(str(e))
         status_writer.log_event(f"ERROR: {e}")
-        last_known_price = prev_status.get("current_price", 0.0)
         try:
             status_writer.write(
                 mode=config.mode, market=market, symbol=symbol, last_signal="ERROR",
-                current_price=last_known_price, capital=risk_manager.state.capital,
+                current_price=current_price_for_status, capital=risk_manager.state.capital,
                 starting_capital=bot_state.starting_capital, daily_pnl=risk_manager.state.daily_pnl,
                 trading_halted_today=risk_manager.state.trading_halted_today, open_position=open_position,
                 run_count=run_count,
