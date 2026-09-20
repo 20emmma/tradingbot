@@ -4,5 +4,6 @@
   "day": "2026-09-20",
   "daily_pnl": 0.0,
   "trading_halted_today": false,
-  "open_position": null
+  "open_position": null,
+  "last_processed_candle_ts": 1789869600
 }
