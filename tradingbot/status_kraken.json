@@ -2,9 +2,9 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1790771414,
+  "last_updated": 1790772314,
   "last_signal": "BUY",
-  "current_price": 83965.2,
+  "current_price": 84850.3,
   "capital": 11.289650656322058,
   "starting_capital": 10.0,
   "daily_pnl": 0.0,
@@ -278,5 +278,5 @@
       "signal": "BUY"
     }
   ],
-  "run_count": 1296
+  "run_count": 1297
 }
