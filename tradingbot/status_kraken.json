@@ -2,9 +2,9 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1790934313,
+  "last_updated": 1790935214,
   "last_signal": "HOLD",
-  "current_price": 86325.6,
+  "current_price": 86358.2,
   "capital": 11.20408232994325,
   "starting_capital": 10.0,
   "daily_pnl": 0.0,
@@ -37,11 +37,6 @@
     "[2026-08-22 10:12:23 UTC] Closed position via signal: XBTUSD at $76735.6000, PnL $+1.6954"
   ],
   "price_history": [
-    {
-      "t": 1790762414,
-      "price": 83601.8,
-      "signal": "HOLD"
-    },
     {
       "t": 1790766014,
       "price": 83859.6,
@@ -276,7 +271,12 @@
       "t": 1790931618,
       "price": 86214.6,
       "signal": "HOLD"
+    },
+    {
+      "t": 1790935214,
+      "price": 86358.2,
+      "signal": "HOLD"
     }
   ],
-  "run_count": 1477
+  "run_count": 1478
 }
