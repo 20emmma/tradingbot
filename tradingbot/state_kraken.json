@@ -1,9 +1,9 @@
 {
   "capital": 11.114935720801853,
   "starting_capital": 10.0,
-  "day": "2026-10-14",
-  "daily_pnl": -0.1521672400843506,
+  "day": "2026-10-15",
+  "daily_pnl": 0.0,
   "trading_halted_today": false,
   "open_position": null,
-  "last_processed_candle_ts": 1792018800
+  "last_processed_candle_ts": 1792022400
 }
