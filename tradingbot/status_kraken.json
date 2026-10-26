@@ -2,15 +2,20 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1793051115,
-  "last_signal": "SELL",
-  "current_price": 79994.7,
+  "last_updated": 1793052016,
+  "last_signal": "BUY",
+  "current_price": 79945.8,
   "capital": 10.422741533721387,
   "starting_capital": 10.0,
   "daily_pnl": -0.08920147982728296,
   "trading_halted_today": false,
-  "open_position": null,
+  "open_position": {
+    "side": "buy",
+    "entry_price": 79930.8,
+    "notional_usd": 10.422741533721387
+  },
   "recent_events": [
+    "[2026-10-26 22:00:16 UTC] Opened position: XBTUSD at $79930.8000",
     "[2026-10-26 21:00:20 UTC] Closed position via signal: XBTUSD at $79722.0000, PnL $-0.0892",
     "[2026-10-25 22:00:16 UTC] Opened position: XBTUSD at $80194.0000",
     "[2026-10-25 12:00:14 UTC] Closed position via signal: XBTUSD at $80476.2000, PnL $-0.0673",
@@ -29,15 +34,9 @@
     "[2026-10-14 03:00:16 UTC] Opened position: XBTUSD at $83582.1000",
     "[2026-10-13 21:00:20 UTC] Closed position via signal: XBTUSD at $83335.4000, PnL $+0.0041",
     "[2026-10-13 13:00:27 UTC] ERROR: HTTPSConnectionPool(host='api.kraken.com', port=443): Read timed out. (read timeout=10)",
-    "[2026-10-11 12:00:14 UTC] Opened position: XBTUSD at $83089.2000",
-    "[2026-10-11 10:00:17 UTC] Closed position via signal: XBTUSD at $82960.6000, PnL $+0.0034"
+    "[2026-10-11 12:00:14 UTC] Opened position: XBTUSD at $83089.2000"
   ],
   "price_history": [
-    {
-      "t": 1792879213,
-      "price": 80315.2,
-      "signal": "HOLD"
-    },
     {
       "t": 1792882815,
       "price": 80500.0,
@@ -272,7 +271,12 @@
       "t": 1793048420,
       "price": 79722.0,
       "signal": "SELL"
+    },
+    {
+      "t": 1793052016,
+      "price": 79945.8,
+      "signal": "BUY"
     }
   ],
-  "run_count": 3812
+  "run_count": 3813
 }
