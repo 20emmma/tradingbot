@@ -2,9 +2,9 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1793094321,
+  "last_updated": 1793095214,
   "last_signal": "HOLD",
-  "current_price": 79569.5,
+  "current_price": 79635.5,
   "capital": 10.385745268680042,
   "starting_capital": 10.0,
   "daily_pnl": 0.0,
@@ -33,11 +33,6 @@
     "[2026-10-13 13:00:27 UTC] ERROR: HTTPSConnectionPool(host='api.kraken.com', port=443): Read timed out. (read timeout=10)"
   ],
   "price_history": [
-    {
-      "t": 1792922418,
-      "price": 80245.7,
-      "signal": "HOLD"
-    },
     {
       "t": 1792926015,
       "price": 80192.0,
@@ -272,7 +267,12 @@
       "t": 1793091615,
       "price": 79734.6,
       "signal": "HOLD"
+    },
+    {
+      "t": 1793095214,
+      "price": 79635.5,
+      "signal": "HOLD"
     }
   ],
-  "run_count": 3860
+  "run_count": 3861
 }
