@@ -2,19 +2,16 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1794293113,
-  "last_signal": "HOLD",
-  "current_price": 74590.6,
-  "capital": 9.870787267022672,
+  "last_updated": 1794294018,
+  "last_signal": "SELL",
+  "current_price": 74553.2,
+  "capital": 9.7316655943525,
   "starting_capital": 10.0,
-  "daily_pnl": 0.0,
+  "daily_pnl": -0.13912167267017334,
   "trading_halted_today": false,
-  "open_position": {
-    "side": "buy",
-    "entry_price": 75420.1,
-    "notional_usd": 9.870787267022672
-  },
+  "open_position": null,
   "recent_events": [
+    "[2026-11-10 07:00:18 UTC] Closed position via signal: XBTUSD at $74553.2000, PnL $-0.1391",
     "[2026-11-09 21:30:17 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
     "[2026-11-09 21:15:16 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
     "[2026-11-09 21:00:17 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
@@ -33,15 +30,9 @@
     "[2026-10-29 03:00:17 UTC] Closed position via signal: XBTUSD at $79892.5000, PnL $-0.1918",
     "[2026-10-28 23:00:20 UTC] Opened position: XBTUSD at $81180.5000",
     "[2026-10-28 17:00:18 UTC] Closed position via signal: XBTUSD at $80466.8000, PnL $+0.0012",
-    "[2026-10-27 15:00:16 UTC] Opened position: XBTUSD at $80248.7000",
-    "[2026-10-26 23:00:16 UTC] Closed position via signal: XBTUSD at $79854.9000, PnL $-0.0370"
+    "[2026-10-27 15:00:16 UTC] Opened position: XBTUSD at $80248.7000"
   ],
   "price_history": [
-    {
-      "t": 1794121217,
-      "price": 75726.6,
-      "signal": "HOLD"
-    },
     {
       "t": 1794124814,
       "price": 75865.1,
@@ -276,7 +267,12 @@
       "t": 1794290416,
       "price": 74711.4,
       "signal": "HOLD"
+    },
+    {
+      "t": 1794294017,
+      "price": 74553.2,
+      "signal": "SELL"
     }
   ],
-  "run_count": 5183
+  "run_count": 5184
 }
