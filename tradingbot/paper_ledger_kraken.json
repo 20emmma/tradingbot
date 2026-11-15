@@ -601,5 +601,14 @@
     "price": 65303.9,
     "fee": 0.025302330545316498,
     "balance_after": 9.7316655943525
+  },
+  {
+    "timestamp": 1794780014,
+    "symbol": "XBTUSD",
+    "side": "sell",
+    "notional_usd": 9.7316655943525,
+    "price": 64931.1,
+    "fee": 0.025302330545316498,
+    "balance_after": 9.7316655943525
   }
 ]
