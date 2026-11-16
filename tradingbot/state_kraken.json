@@ -4,6 +4,10 @@
   "day": "2026-11-16",
   "daily_pnl": -0.061045124636971086,
   "trading_halted_today": false,
-  "open_position": null,
-  "last_processed_candle_ts": 1794855600
+  "open_position": {
+    "side": "buy",
+    "entry_price": 64969.9,
+    "notional_usd": 9.58976303551523
+  },
+  "last_processed_candle_ts": 1794859200
 }
