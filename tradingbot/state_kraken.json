@@ -1,13 +1,9 @@
 {
-  "capital": 9.6508081601522,
+  "capital": 9.58976303551523,
   "starting_capital": 10.0,
   "day": "2026-11-16",
-  "daily_pnl": 0.0,
+  "daily_pnl": -0.061045124636971086,
   "trading_halted_today": false,
-  "open_position": {
-    "side": "buy",
-    "entry_price": 65308.6,
-    "notional_usd": 9.6508081601522
-  },
-  "last_processed_candle_ts": 1794798000
+  "open_position": null,
+  "last_processed_candle_ts": 1794801600
 }
