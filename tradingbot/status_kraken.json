@@ -2,9 +2,9 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1794865514,
+  "last_updated": 1794866431,
   "last_signal": "HOLD",
-  "current_price": 65265.4,
+  "current_price": 65278.9,
   "capital": 9.58976303551523,
   "starting_capital": 10.0,
   "daily_pnl": -0.061045124636971086,
@@ -37,11 +37,6 @@
     "[2026-10-29 20:45:15 UTC] Daily loss limit hit. Today's PnL: $-0.5831"
   ],
   "price_history": [
-    {
-      "t": 1794693614,
-      "price": 64334.5,
-      "signal": "HOLD"
-    },
     {
       "t": 1794697216,
       "price": 63540.6,
@@ -276,7 +271,12 @@
       "t": 1794862817,
       "price": 64928.4,
       "signal": "HOLD"
+    },
+    {
+      "t": 1794866431,
+      "price": 65278.9,
+      "signal": "HOLD"
     }
   ],
-  "run_count": 5817
+  "run_count": 5818
 }
