@@ -2,19 +2,16 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1795473920,
-  "last_signal": "HOLD",
-  "current_price": 61096.0,
-  "capital": 8.939941297403667,
+  "last_updated": 1795474818,
+  "last_signal": "SELL",
+  "current_price": 61166.9,
+  "capital": 8.974893354630991,
   "starting_capital": 10.0,
-  "daily_pnl": 0.0,
+  "daily_pnl": 0.034952057227324716,
   "trading_halted_today": false,
-  "open_position": {
-    "side": "buy",
-    "entry_price": 60771.3,
-    "notional_usd": 8.939941297403667
-  },
+  "open_position": null,
   "recent_events": [
+    "[2026-11-23 23:00:18 UTC] Closed position via signal: XBTUSD at $61166.9000, PnL $+0.0350",
     "[2026-11-22 13:00:15 UTC] Opened position: XBTUSD at $60771.3000",
     "[2026-11-22 05:45:15 UTC] Closed position via stop-loss: XBTUSD at $58689.6000, PnL $-0.3020",
     "[2026-11-21 14:00:20 UTC] Opened position: XBTUSD at $60509.7000",
@@ -33,15 +30,9 @@
     "[2026-11-09 21:30:17 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
     "[2026-11-09 21:15:16 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
     "[2026-11-09 21:00:17 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
-    "[2026-11-09 16:00:16 UTC] Opened position: XBTUSD at $75420.1000",
-    "[2026-11-07 01:00:13 UTC] Closed position via signal: XBTUSD at $75792.1000, PnL $-0.0290"
+    "[2026-11-09 16:00:16 UTC] Opened position: XBTUSD at $75420.1000"
   ],
   "price_history": [
-    {
-      "t": 1795302016,
-      "price": 60009.8,
-      "signal": "HOLD"
-    },
     {
       "t": 1795305617,
       "price": 60078.3,
@@ -276,7 +267,12 @@
       "t": 1795471218,
       "price": 61270.4,
       "signal": "HOLD"
+    },
+    {
+      "t": 1795474817,
+      "price": 61166.9,
+      "signal": "SELL"
     }
   ],
-  "run_count": 6493
+  "run_count": 6494
 }
