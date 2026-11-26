@@ -2,19 +2,16 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1795715116,
-  "last_signal": "HOLD",
-  "current_price": 60371.7,
-  "capital": 8.974893354630991,
+  "last_updated": 1795716017,
+  "last_signal": "SELL",
+  "current_price": 60461.1,
+  "capital": 8.996897678448224,
   "starting_capital": 10.0,
-  "daily_pnl": 0.0,
+  "daily_pnl": 0.022004323817232718,
   "trading_halted_today": false,
-  "open_position": {
-    "side": "buy",
-    "entry_price": 60157.2,
-    "notional_usd": 8.974893354630991
-  },
+  "open_position": null,
   "recent_events": [
+    "[2026-11-26 18:00:17 UTC] Closed position via signal: XBTUSD at $60461.1000, PnL $+0.0220",
     "[2026-11-25 21:00:25 UTC] Opened position: XBTUSD at $60157.2000",
     "[2026-11-23 23:00:18 UTC] Closed position via signal: XBTUSD at $61166.9000, PnL $+0.0350",
     "[2026-11-22 13:00:15 UTC] Opened position: XBTUSD at $60771.3000",
@@ -33,15 +30,9 @@
     "[2026-11-14 05:00:24 UTC] ERROR: HTTPSConnectionPool(host='api.kraken.com', port=443): Read timed out. (read timeout=10)",
     "[2026-11-10 07:00:18 UTC] Closed position via signal: XBTUSD at $74553.2000, PnL $-0.1391",
     "[2026-11-09 21:30:17 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
-    "[2026-11-09 21:15:16 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD",
-    "[2026-11-09 21:00:17 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD"
+    "[2026-11-09 21:15:16 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD"
   ],
   "price_history": [
-    {
-      "t": 1795543226,
-      "price": 60030.3,
-      "signal": "HOLD"
-    },
     {
       "t": 1795546818,
       "price": 59812.9,
@@ -276,7 +267,12 @@
       "t": 1795712419,
       "price": 60465.1,
       "signal": "HOLD"
+    },
+    {
+      "t": 1795716017,
+      "price": 60461.1,
+      "signal": "SELL"
     }
   ],
-  "run_count": 6758
+  "run_count": 6759
 }
