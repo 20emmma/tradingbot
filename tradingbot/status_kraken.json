@@ -2,9 +2,9 @@
   "mode": "paper",
   "market": "kraken",
   "symbol": "XBTUSD",
-  "last_updated": 1795869913,
+  "last_updated": 1795870818,
   "last_signal": "HOLD",
-  "current_price": 59171.7,
+  "current_price": 59157.9,
   "capital": 8.996897678448224,
   "starting_capital": 10.0,
   "daily_pnl": 0.0,
@@ -33,11 +33,6 @@
     "[2026-11-09 21:15:16 UTC] ERROR: 503 Server Error: Service Unavailable for url: https://api.kraken.com/0/public/Ticker?pair=XBTUSD"
   ],
   "price_history": [
-    {
-      "t": 1795698016,
-      "price": 60736.8,
-      "signal": "HOLD"
-    },
     {
       "t": 1795701623,
       "price": 60795.0,
@@ -272,7 +267,12 @@
       "t": 1795867218,
       "price": 59184.9,
       "signal": "HOLD"
+    },
+    {
+      "t": 1795870818,
+      "price": 59157.9,
+      "signal": "HOLD"
     }
   ],
-  "run_count": 6930
+  "run_count": 6931
 }
